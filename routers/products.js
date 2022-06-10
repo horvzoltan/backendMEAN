@@ -10,27 +10,34 @@ router.get(`/`, async (req, res) => {
     res.send(productList);
 })
 
-router.post(`/`, (req, res) => {
-    const product = new Product({
-        name: req.body.name,
+router.post(`/`, async (req, res) => {
+    const product = await new Product({
+        richDescription: req.body.richDescription,
         image: req.body.image,
+        images: req.body.images,
+        brand: req.body.brand,
+        price: req.body.price,
+        rating: req.body.rating,
+        numReviews: req.body.numReviews,
+        isFeatured: req.body.isFeatured,
+        name: req.body.name,
+        description: req.body.description,
+        category: req.body.category,
         countInStock: req.body.countInStock
     });
-    product
+
+    await product
         .save()
-        .then((createdProduct) => {
-            res
-                .status(201)
-                .json(createdProduct)
-        })
-        .catch((err) => {
-            res
-                .status(500)
-                .json({
-                    error: err,
-                    success: false
-                })
-        });
+        .then(
+            (product) => {
+                res.status(200).send(product);
+            }
+        )
+        .catch(
+            (err) => {
+                res.status(500).send(`The product cannot be saved! \n ERROR: ${err}`)
+            }
+        );
 })
 
 module.exports = router;
