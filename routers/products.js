@@ -3,11 +3,22 @@ const express = require('express');
 const router = express.Router();
 
 router.get(`/`, async (req, res) => {
-    const productList = await Product.find();
+    const productList = await Product.find().populate('category');
     if (!productList) {
         res.status(500).json({ sucess: false })
     }
     res.send(productList);
+})
+
+router.get(`/:id`, async (req, res) => {
+    const product = await Product.findById(req.params.id)
+        .populate('category')
+        .then((product) => {
+            res.send(product);
+        })
+        .catch((err) => {
+            return res.status(500).send(`Invalid ID ${err}`);
+        });
 })
 
 router.post(`/`, async (req, res) => {
