@@ -51,7 +51,6 @@ router.put(`/:id`, async (req, res) => {
     }
 
     res.send(category);
-
 })
 
 router.delete(`/:id`, (req, res) => {
