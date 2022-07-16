@@ -5,7 +5,11 @@ const { restart } = require('nodemon');
 const router = express.Router();
 
 router.get(`/`, async (req, res) => {
-    const productList = await Product.find().populate('category');
+    let filter = {};
+    if(req.query.categories){
+        filter = {category: req.query.categories.split(',')};
+    }
+    const productList = await Product.find(filter).populate('category');
     if (!productList) {
         res.status(500).json({ success: false })
     }
