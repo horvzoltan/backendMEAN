@@ -27,6 +27,30 @@ router.get(`/:id`, async (req, res) => {
         });
 })
 
+router.get(`/get/featured/:count`, async (req, res) => {
+    const count = req.params.count ? req.params.count : 0;
+    const featuredProduct = await Product.find({ isFeatured: true })
+        .limit(+count)
+        .catch((err) => {
+            return res.status(500).json({
+                success: false, message: err
+            })
+        })
+    return res.status(200).json(featuredProduct);
+})
+
+router.get(`/get/count`, async (req, res) => {
+    const productCount = await Product.countDocuments()
+        .catch((err) => {
+            return res.status(500).json({
+                success: false, message: err
+            })
+        })
+    return res.status(200).json({
+        productCount: productCount
+    });
+})
+
 router.put(`/:id`, async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).send('Invalid Product Id');
 
@@ -98,30 +122,6 @@ router.post(`/`, async (req, res) => {
                 res.status(500).send(`The product cannot be saved! \n ERROR: ${err}`)
             }
         );
-})
-
-router.get(`/get/count`, async (req, res) => {
-    const productCount = await Product.countDocuments()
-        .catch((err) => {
-            return res.status(500).json({
-                success: false, message: err
-            })
-        })
-    return res.status(200).json({
-        productCount: productCount
-    });
-})
-
-router.get(`/get/featured/:count`, async (req, res) => {
-    const count = req.params.count ? req.params.count : 0;
-    const featuredProduct = await Product.find({ isFeatured: true })
-        .limit(+count)
-        .catch((err) => {
-            return res.status(500).json({
-                success: false, message: err
-            })
-        })
-    return res.status(200).json(featuredProduct);
 })
 
 module.exports = router;
